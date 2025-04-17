@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Cubo\Eng;
+namespace FFPerera\Cubo;
 
-use Cubo\Eng\Response;
-use Cubo\Eng\View;
+use FFPerera\Cubo\Response;
+use FFPerera\Cubo\View;
 
 class Render
 {

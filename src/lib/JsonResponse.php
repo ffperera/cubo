@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Cubo\Eng;
+namespace FFPerera\Cubo;
 
-use Cubo\Eng\Response;
+use FFPerera\Cubo\Response;
 
 class JsonResponse extends Response
 {

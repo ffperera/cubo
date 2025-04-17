@@ -1,10 +1,10 @@
 <?php
 declare(strict_types=1);
 
-namespace Cubo\Eng;
+namespace FFPerera\Cubo;
 
-use Cubo\Eng\Action;
-use Cubo\Eng\Node;
+use FFPerera\Cubo\Action;
+use FFPerera\Cubo\Node;
 
 
 class ActionQueue

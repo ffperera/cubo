@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Cubo\Eng;
+namespace FFPerera\Cubo;
 
 
 class View {

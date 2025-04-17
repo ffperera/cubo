@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Cubo\Eng;
+namespace FFPerera\Cubo;
 
-use Cubo\Eng\ActionQueue;
-use Cubo\Eng\Action;
-use Cubo\Eng\Request;
-use Cubo\Eng\View;
+use FFPerera\Cubo\ActionQueue;
+use FFPerera\Cubo\Action;
+use FFPerera\Cubo\Request;
+use FFPerera\Cubo\View;
 
 
 

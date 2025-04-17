@@ -1,7 +1,7 @@
 <?php 
 declare(strict_types=1);
 
-namespace Cubo\Eng;
+namespace FFPerera\Cubo;
 
 // PHP session wrapper
 class Session

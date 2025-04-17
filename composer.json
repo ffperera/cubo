@@ -1,0 +1,26 @@
+{
+    "name": "ffperera/cubo",
+    "description": "\"Lightweight PHP framework for web apps\"",
+    "type": "library",
+    "require": {
+        "php": ">=8.1",
+        "psr/log": "^3.0"
+    },
+    "require-dev": {
+        "phpstan/phpstan": "^2.1",
+        "phpunit/phpunit": "^12.1"
+    },
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "FFPerera\\Cubo\\": "src/lib/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Felipe Fernandez Perera",
+            "email": "ffperera@gmail.com"
+        }
+    ],
+    "minimum-stability": "stable"
+}
