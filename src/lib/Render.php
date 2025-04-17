@@ -19,7 +19,7 @@ class Render
       $this->rootDirectory = $rootDirectory;
       return;
     }
-    
+
     // if root directory is not set, use the document root
     $this->rootDirectory = $_SERVER['DOCUMENT_ROOT'];
   }
@@ -62,7 +62,7 @@ class Render
     if(file_exists($this->rootDirectory . $template)) {
       include $this->rootDirectory . $template;
     } else {
-      throw new \RuntimeException("Layout file not found: " . $template);
+      throw new \RuntimeException("Layout file not found: " . $this->rootDirectory . $template);
     }    
   }
 
