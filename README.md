@@ -17,7 +17,6 @@ It provides a minimalist but solid foundation for the development process, with 
 - **HTTP Response Handling**: Simplifies response management.
 
 
-
 ## Requirements
 
 - PHP 8.1 or higher
@@ -299,7 +298,7 @@ $view = new View();
 $view->setLayout('layout.php');
 $view->setTemplate('content', 'content.php');
 
-// from the Action or anyware 
+// inside the Action or in the main entry point
 if ($view) {
     $render = new Render($srcDir);
     $render->send($view);
