@@ -35,7 +35,7 @@ Install using Composer:
 
 Think of Cubo as a tool designed to manage request routing and the tasks and services linked to those routes.
 
-As we'll explore later, Cubo operates through executing sequences of tasks, encapsulated as Action objects.
+As we'll explore later, Cubo operates through executing sequences of tasks, encapsulated as `Action` objects.
 
 A Cubo-based project can be organized in countless ways. The framework is intentionally project-structure agnostic. You’re free to adopt whatever project layout best suits your needs, and you can use external components, packages, or services as required.
 
@@ -116,7 +116,7 @@ These sections can be converted into independent services with minimal refactori
 
 ### Action queues
 
-An **Action** is a class that performs specific tasks.
+An `Action` is a class that performs specific tasks.
 
 Developers can:
 
@@ -129,7 +129,7 @@ There are three action queues:
 
 - *pre*: Handles setup tasks, dependency injections, and middleware
 - *main*: *Controller-like* actions tied to specific routes
-- *post*: Manages cleanup operations
+- *pos*: Manages cleanup operations
 
 Action queues are dynamic ones. 
 
@@ -138,6 +138,81 @@ Action queues are dynamic ones.
 - Implement error recovery flows
 
 Example: If a request fails, abort the current action and insert a fallback action to handle the failure. 
+
+
+### Action
+
+Example of one `Action` class.
+
+
+```php
+class PostList extends Action
+{
+  public function __construct(private IPostRepository $repo) {}
+
+  public function run(Controller $controller): void
+  {
+    
+    // initialize the repository with the PDO connection
+    try {
+        $this->repo->init(['PDO' => $controller->get('PDO')]);
+    }
+    catch (\Exception $e) {
+        // TODO: handle the exception
+    }
+
+    // fetch posts from the repository
+    $posts = $this->repo->getPosts();
+
+    $view = $controller->getView();
+
+    $view->set('posts', $posts);
+
+    $view->set('title', 'POSTS');
+    $view->set('post-list-intro', 'This is the list of posts');
+
+
+    $view->setLayout('/Pub/layout/main.php');
+    $view->setTemplate('main', '/Pub/layout/post_list.php');
+    
+    $view->set('metatitle', 'List of Posts');
+    $view->set('metadesc', 'Published posts');
+    $view->set('canonical', '/blog/');    
+
+  }
+
+}
+```
+
+### Main controller
+
+The `Controller` object acts as Cubo's orchestration center.  
+
+It handles:  
+- Request routing management  
+- Action queue  
+- Dependency injection (e.g., services)  
+- Access to core Cubo components (`Request`, `View`, `Render`, `Response`)  
+
+Once configured, your application primarily operates through the `Controller::run()` method call.  
+
+
+```php
+$controller = new Controller($routes, $logger);
+
+try {
+    $view = $controller->run();
+
+    if ($view) {
+        $render = new Render($srcDir);
+        $render->send($view);
+    }
+
+} catch (Exception $e) {
+    // Handle exceptions and errors
+    echo 'Error: ' . $e->getMessage();
+}
+```
 
 
 
