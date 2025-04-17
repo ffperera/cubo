@@ -1,0 +1,111 @@
+<?php
+declare(strict_types=1);
+
+namespace Cubo\Eng;
+
+use Cubo\Eng\Action;
+use Cubo\Eng\Node;
+
+
+class ActionQueue
+{
+
+  private ?Node $head;
+ 
+  public function __construct() {
+    $this->head = null;
+  }
+
+
+  public function push(Action $action): void {
+    // insert at the beginning
+    $newNode = new Node($action);
+  
+    if ($this->head === null) {
+      $this->head = $newNode;
+      return;
+    }
+  
+    $newNode->setNext($this->head);
+    $this->head = $newNode;
+   
+  }
+  
+
+  public function append(Action $action):void {
+    if ($this->head === null) {
+      $this->head = new Node($action);
+    } else {
+      $current = $this->head;
+      while ($current->getNext() !== null) {
+        $current = $current->getNext();
+      }
+      $current->setNext(new Node($action));
+    }
+  }
+
+
+  public function insertBefore(Action $action, Action $before):void {
+    if ($this->head === null) {
+      return;
+    }
+  
+    if ($this->head->getAction()::class === $before::class) {
+      $newNode = new Node($action);
+      $newNode->setNext($this->head);
+      $this->head = $newNode;
+      return;
+    }
+  
+    $current = $this->head;
+    while ($current->getNext() !== null && $current->getNext()->getAction()::class == $before::class) {
+      $current = $current->getNext();
+    }
+  
+    if ($current->getNext() !== null) {
+      $newNode = new Node($action);
+      $newNode->setNext($current->getNext());
+      $current->setNext($newNode);
+    }
+  }
+
+
+  public function insertAfter(Action $action, Action $after): void {
+    if ($this->head === null) {
+      return;
+    }
+  
+    $current = $this->head;
+    while ($current !== null && $current->getAction()::class !== $after::class) {
+      $current = $current->getNext();
+    }
+  
+    if ($current !== null) {
+      $newNode = new Node($action);
+      $newNode->setNext($current->getNext());
+      $current->setNext($newNode);
+    }
+  }
+
+
+  public function pop(): ?Action {
+    if ($this->head === null) {
+      return null;
+    }
+  
+    $action = $this->head->getAction();
+    $this->head = $this->head->getNext();
+    return $action;
+  }
+
+  public function isEmpty(): bool
+  {
+    return $this->head === null;
+  }
+
+  public function getHead(): ?Node
+  {
+    return $this->head;
+  }
+  
+} 
