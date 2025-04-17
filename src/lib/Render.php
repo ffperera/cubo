@@ -13,7 +13,14 @@ class Render
   private string $rootDirectory;
   private View $view;
 
-  public function __construct() {
+  public function __construct(string $rootDirectory = '') {
+    
+    if ($rootDirectory !== '') {
+      $this->rootDirectory = $rootDirectory;
+      return;
+    }
+    
+    // if root directory is not set, use the document root
     $this->rootDirectory = $_SERVER['DOCUMENT_ROOT'];
   }
 
