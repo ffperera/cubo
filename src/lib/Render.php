@@ -11,9 +11,9 @@ class Render
 {
 
   private string $rootDirectory;
-  private View $view;
 
-  public function __construct(string $rootDirectory = '')
+
+  public function __construct(private View $view, string $rootDirectory = '')
   {
 
     if ($rootDirectory !== '') {
@@ -28,10 +28,9 @@ class Render
 
 
   // render view and sends directly to the client
-  public function send(View $view): void
+  public function send(): void
   {
-
-    $this->view = $view;
+    $view = $this->view;
 
     // get layout
     $layout = trim($view->getLayout());
@@ -56,9 +55,7 @@ class Render
 
   public function insert(string $template): void
   {
-
-    $view = $this->view;
-
+    // check if the template file exists
     if (file_exists($this->rootDirectory . $template)) {
       include $this->rootDirectory . $template;
     } else {
@@ -71,6 +68,10 @@ class Render
     return $this->view;
   }
 
+  public function getRootDirectory(): string
+  {
+    return $this->rootDirectory;
+  }
 
   // render view and return the response
   public function render(View $view): Response
