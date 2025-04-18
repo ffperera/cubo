@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace FFPerera\Cubo;
 
-use FFperera\Cubo\Controller;
+use FFPerera\Cubo\Controller;
 
 
 abstract class Action

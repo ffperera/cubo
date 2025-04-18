@@ -60,7 +60,7 @@ A typical project using Cubo looks like this:
 │   │
 │   ├── Adm
 │   │   ├── Global
-│   │   │   └── actions
+│   │   │   └── Actions
 │   │   ├── Home
 │   │   │   └── Actions
 │   │   ├── Login
