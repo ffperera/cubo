@@ -1,4 +1,5 @@
-<?php 
+<?php
+
 declare(strict_types=1);
 
 namespace FFPerera\Cubo;
@@ -23,10 +24,10 @@ class Session
             session_start();
         }
 
-        if ($this->timeOut($this->lifetime) ){
+        if ($this->timeOut($this->lifetime)) {
             $this->destroy();
             session_start(); // Restart the session if timed out
-        } 
+        }
 
         $_SESSION['last_activity'] = time(); // Update last activity timestamp
     }
@@ -40,7 +41,7 @@ class Session
             $params = session_get_cookie_params();
             setcookie(session_name(), '', time() - 72600, $params['path'], $params['domain'], $params['secure'], $params['httponly']);
             session_regenerate_id(true); // Regenerate session ID to prevent session fixation
-            
+
             // Destroy the session
             session_destroy();
         }
@@ -76,5 +77,4 @@ class Session
 
         return false;
     }
-
 }

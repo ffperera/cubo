@@ -13,8 +13,9 @@ class Render
   private string $rootDirectory;
   private View $view;
 
-  public function __construct(string $rootDirectory = '') {
-    
+  public function __construct(string $rootDirectory = '')
+  {
+
     if ($rootDirectory !== '') {
       $this->rootDirectory = $rootDirectory;
       return;
@@ -27,7 +28,7 @@ class Render
 
 
   // render view and sends directly to the client
-  public function send(View $view): void 
+  public function send(View $view): void
   {
 
     $this->view = $view;
@@ -40,10 +41,9 @@ class Render
     }
 
     $this->insert($layout);
-
   }
 
-  public function block(string $blockKey): void 
+  public function block(string $blockKey): void
   {
     $block = $this->view->getTemplate($blockKey);
     if ($block === '') {
@@ -54,16 +54,16 @@ class Render
   }
 
 
-  public function insert(string $template): void 
+  public function insert(string $template): void
   {
 
     $view = $this->view;
 
-    if(file_exists($this->rootDirectory . $template)) {
+    if (file_exists($this->rootDirectory . $template)) {
       include $this->rootDirectory . $template;
     } else {
       throw new \RuntimeException("Layout file not found: " . $this->rootDirectory . $template);
-    }    
+    }
   }
 
   public function getView(): View

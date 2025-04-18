@@ -78,10 +78,10 @@ class Response
     $this->statusText = $text;
   }
 
-  public function redirect(string $route): void {
+  public function redirect(string $route): void
+  {
     // send redirection header
     header('Location: ' . $route, true, 302);
     die();
   }
-
 }

@@ -5,7 +5,8 @@ declare(strict_types=1);
 namespace FFPerera\Cubo;
 
 
-class View {
+class View
+{
 
     private string $layout;
 

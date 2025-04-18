@@ -11,29 +11,29 @@ class Request
 
   private string $method;
 
-/**
- * @var array<string, mixed> $post
- */
+  /**
+   * @var array<string, mixed> $post
+   */
   private array $post;
 
   /**
- * @var array<string, mixed> $get
- */  
+   * @var array<string, mixed> $get
+   */
   private array $get;
 
   /** 
    * @var array<string, mixed> $cookies 
-  */
+   */
   private array $cookies;
 
   /** 
    * @var array<string, mixed> $server 
-  */
+   */
   private array $server;
 
-    /** 
+  /** 
    * @var array<string, mixed> $uriInfo 
-  */
+   */
   private array $uriInfo;
 
 
@@ -47,7 +47,6 @@ class Request
     $this->uriInfo = parse_url($_SERVER['REQUEST_URI']);
 
     $this->method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
-
   }
 
 
@@ -76,7 +75,7 @@ class Request
   {
     return $this->method;
   }
-  
+
   /**
    * @return array<string, mixed>
    */
@@ -108,6 +107,4 @@ class Request
 
     return $this->uriInfo['path'] ?? '/';
   }
-
-
 }

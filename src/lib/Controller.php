@@ -48,7 +48,7 @@ class Controller
     $this->postQueue = new ActionQueue();
 
     $this->view = null;
-    
+
 
     $this->request = new Request();
     $this->routing();
@@ -93,7 +93,7 @@ class Controller
       if ($counter > 100) {
         throw new \RuntimeException('Infinite loop detected in action execution (postQueue)');
       }
-    }    
+    }
 
     return $this->view;
   }
@@ -110,10 +110,10 @@ class Controller
     }
   }
 
-  public function addActionFromRoute(string $section, string $name, string $queue='main'): void
+  public function addActionFromRoute(string $section, string $name, string $queue = 'main'): void
   {
     if (isset($this->routes[$section][$name])) {
-      $this->addAction ($this->routes[$section][$name]['action'], $queue);
+      $this->addAction($this->routes[$section][$name]['action'], $queue);
     } else {
       throw new \InvalidArgumentException('Route not found');
     }

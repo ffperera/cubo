@@ -11,5 +11,4 @@ abstract class Action
 {
 
   public abstract function run(Controller $controller): void;
-
-} 
+}

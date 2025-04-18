@@ -42,5 +42,4 @@ class Node
   {
     return $this->action === null;
   }
-
-} 
+}
