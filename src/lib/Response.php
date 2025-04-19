@@ -8,7 +8,7 @@ namespace FFPerera\Cubo;
 class Response
 {
 
-  private string $data;
+  // private string $data;
 
   /**
    * @var array<string, string> $headers
@@ -21,7 +21,7 @@ class Response
   private string $protocolVersion = '1.1';
 
 
-  public function __construct() {}
+  public function __construct(private ?string $data) {}
 
 
   public function send(?string $data = null): void

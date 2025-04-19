@@ -74,12 +74,12 @@ class Render
   }
 
   // render view and return the response
-  public function render(View $view): Response
+  public function render(): Response
   {
+    ob_start();
+    $this->send();
+    $content = ob_get_clean();
 
-    // TODO: implement
-
-
-    return new Response();
+    return new Response($content);
   }
 }
