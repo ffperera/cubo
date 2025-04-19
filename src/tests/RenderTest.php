@@ -93,4 +93,22 @@ class RenderTest extends TestCase
         // Assert that the output matches the template content
         $this->assertEquals('Template Content Block Content', $output);
     }
+
+    public function testRenderWithLayoutAndTemplate()
+    {
+        $view = new \FFPerera\Cubo\View();
+        $view->setLayout(self::$templateFile);
+        $view->setTemplate('block', self::$blockFile);
+
+        $render = new \FFPerera\Cubo\Render($view, self::$rootDirectory);
+        // Capture the output of the send method
+
+        /**
+         * @var \FFPerera\Cubo\Response $response
+         */
+        $response = $render->render();
+
+        // Assert that the output matches the template content
+        $this->assertEquals('Template Content Block Content', $response->getData());
+    }
 }

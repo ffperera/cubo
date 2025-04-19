@@ -64,7 +64,10 @@ class Response
     $this->contentType = $contentType;
   }
 
-
+  public function getData(): ?string
+  {
+    return $this->data;
+  }
 
   public function setProtocolVersion(string $version): void
   {
