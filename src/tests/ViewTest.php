@@ -4,6 +4,9 @@ use PHPUnit\Framework\TestCase;
 
 class ViewTest extends TestCase
 {
+    /**
+     * @covers FFPerera\Cubo\View
+     */
     public function testMethods()
     {
         $view = new \FFPerera\Cubo\View();

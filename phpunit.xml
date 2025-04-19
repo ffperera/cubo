@@ -5,7 +5,8 @@
     displayDetailsOnTestsThatTriggerErrors="true"
     displayDetailsOnTestsThatTriggerNotices="true"
     displayDetailsOnTestsThatTriggerWarnings="true"
-    displayDetailsOnPhpunitDeprecations="true"    
+    displayDetailsOnPhpunitDeprecations="true"  
+    requireCoverageMetadata="false"  
 >
     <php>
         <ini name="error_reporting" value="-1"/>
@@ -16,4 +17,11 @@
             <directory>./src/tests</directory>
         </testsuite>
     </testsuites>
+
+    <source>
+        <include>
+            <directory suffix=".php">./src/lib</directory>
+        </include>
+    </source>    
+
 </phpunit>

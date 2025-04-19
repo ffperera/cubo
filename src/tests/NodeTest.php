@@ -12,7 +12,9 @@ class Action2 extends \FFPerera\Cubo\Action
     public function run(\FFPerera\Cubo\Controller $controller): void {}
 }
 
-
+/**
+ * @covers \FFPerera\Cubo\Node
+ */
 class NodeTest extends TestCase
 {
     protected \FFPerera\Cubo\Action $actionObjectOne;
@@ -33,6 +35,8 @@ class NodeTest extends TestCase
         $this->assertSame($this->actionObjectOne, $node->getAction());
     }
 
+
+
     public function testSettingNextNode()
     {
         $action1 = $this->actionObjectOne;
@@ -45,6 +49,7 @@ class NodeTest extends TestCase
 
         $this->assertSame($node2, $node1->getNext());
     }
+
 
     public function testSetAction()
     {

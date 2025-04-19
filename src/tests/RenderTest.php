@@ -101,7 +101,6 @@ class RenderTest extends TestCase
         $view->setTemplate('block', self::$blockFile);
 
         $render = new \FFPerera\Cubo\Render($view, self::$rootDirectory);
-        // Capture the output of the send method
 
         /**
          * @var \FFPerera\Cubo\Response $response
@@ -110,5 +109,44 @@ class RenderTest extends TestCase
 
         // Assert that the output matches the template content
         $this->assertEquals('Template Content Block Content', $response->getData());
+    }
+
+
+    public function testRenderWithoutLayout()
+    {
+        $view = new \FFPerera\Cubo\View();
+        $view->setTemplate('block', self::$blockFile);
+
+        // $view has no layout set
+        // so there are no calls to the blocks inside
+        $render = new \FFPerera\Cubo\Render($view, self::$rootDirectory);
+
+        /**
+         * @var \FFPerera\Cubo\Response $response
+         */
+        $response = $render->render();
+
+        // there are no layout, so no content is generated
+        $this->assertEquals('', $response->getData());
+    }
+
+    public function testRenderWithNonExistentTemplate()
+    {
+        $this->expectException(\RuntimeException::class);
+        // $this->expectExceptionMessage('Template file not found');
+
+        $view = new \FFPerera\Cubo\View();
+        $view->setLayout('non_existent_template.php');
+
+        $render = new \FFPerera\Cubo\Render($view, self::$rootDirectory);
+        // Capture the output of the send method
+
+        /**
+         * @var \FFPerera\Cubo\Response $response
+         */
+        $response = $render->render();
+
+        // Assert that the output is empty
+        $this->assertEquals('', $response->getData());
     }
 }
