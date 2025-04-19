@@ -16,6 +16,7 @@ class Node
   public function __construct(Action $action)
   {
     $this->action = $action;
+    $this->next = null;
   }
 
   public function getAction(): Action
@@ -33,13 +34,8 @@ class Node
     return $this->next;
   }
 
-  public function setNext(Node $node): void
+  public function setNext(?Node $node): void
   {
     $this->next = $node;
-  }
-
-  public function isEmpty(): bool
-  {
-    return $this->action === null;
   }
 }

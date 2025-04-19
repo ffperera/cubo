@@ -19,31 +19,26 @@ class Response
   private string $contentType = 'text/html';
   private string $charset = 'UTF-8';
   private string $protocolVersion = '1.1';
+  private bool $withHeaders = true;
 
 
   public function __construct(private ?string $data) {}
 
 
-  public function send(?string $data = null): void
+  public function send(?string $data = null, bool $withHeaders = true): void
   {
     if ($data !== null) {
       $this->data = $data;
     }
 
-    $this->headers();
+    $this->withHeaders($withHeaders);
+    if ($this->withHeaders) {
+      $this->sendHeaders();
+    }
 
     echo $this->data;
   }
 
-  public function headers(): void
-  {
-    header(sprintf('HTTP/%s %d %s', $this->protocolVersion, $this->statusCode, $this->statusText));
-    header(sprintf('Content-Type: %s; charset=%s', $this->contentType, $this->charset));
-
-    foreach ($this->headers as $name => $value) {
-      header("$name: $value");
-    }
-  }
 
   public function setHeader(string $name, string $value): void
   {
@@ -59,9 +54,34 @@ class Response
     $this->charset = $charset;
   }
 
+  public function getCharset(): string
+  {
+    return $this->charset;
+  }
+
+
+  /**
+   * @return array<string, string>
+   */
+  public function getHeaders(): array
+  {
+    return $this->headers;
+  }
+
+
   public function setContentType(string $contentType): void
   {
     $this->contentType = $contentType;
+  }
+
+  public function getContentType(): string
+  {
+    return $this->contentType;
+  }
+
+  public function setData(string $data): void
+  {
+    $this->data = $data;
   }
 
   public function getData(): ?string
@@ -81,10 +101,37 @@ class Response
     $this->statusText = $text;
   }
 
+  /**
+   * @return array<string, mixed>
+   */
+  public function getStatus(): array
+  {
+    return [
+      'code' => $this->statusCode,
+      'text' => $this->statusText,
+    ];
+  }
+
+
   public function redirect(string $route): void
   {
     // send redirection header
     header('Location: ' . $route, true, 302);
     die();
+  }
+
+  public function withHeaders(bool $withHeaders = true): void
+  {
+    $this->withHeaders = $withHeaders;
+  }
+
+  protected function sendHeaders(): void
+  {
+    header(sprintf('HTTP/%s %d %s', $this->protocolVersion, $this->statusCode, $this->statusText));
+    header(sprintf('Content-Type: %s; charset=%s', $this->contentType, $this->charset));
+
+    foreach ($this->headers as $name => $value) {
+      header("$name: $value");
+    }
   }
 }

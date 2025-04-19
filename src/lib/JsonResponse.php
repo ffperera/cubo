@@ -11,7 +11,7 @@ class JsonResponse extends Response
 
   public function __construct(private string $data) {}
 
-  public function send(?string $data = null): void
+  public function send(?string $data = null, bool $withHeaders = true): void
   {
 
     if ($data !== null) {
@@ -19,10 +19,15 @@ class JsonResponse extends Response
     }
 
     // Implement the logic for sending a JSON response here
-    header('Content-Type: application/json');
+    $this->setHeader('Content-Type', 'application/json');
 
     // TODO: other headers
-    $this->headers();
+
+
+    if ($withHeaders) {
+      $this->sendHeaders();
+    }
+
     echo json_encode($this->data);
   }
 }

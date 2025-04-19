@@ -48,45 +48,50 @@ class ActionQueue
   }
 
 
-  public function insertBefore(Action $action, Action $before): void
+  public function insertBefore(Action $newAction, Action $targetAction): void
   {
     if ($this->head === null) {
       return;
     }
 
-    if ($this->head->getAction()::class === $before::class) {
-      $newNode = new Node($action);
+    if ($this->head->getAction()::class === $targetAction::class) {
+      $newNode = new Node($newAction);
       $newNode->setNext($this->head);
       $this->head = $newNode;
       return;
     }
 
     $current = $this->head;
-    while ($current->getNext() !== null && $current->getNext()->getAction()::class == $before::class) {
+    while ($current->getNext() !== null && $current->getNext()->getAction()::class == $targetAction::class) {
       $current = $current->getNext();
     }
 
     if ($current->getNext() !== null) {
-      $newNode = new Node($action);
+      $newNode = new Node($newAction);
       $newNode->setNext($current->getNext());
       $current->setNext($newNode);
     }
   }
 
 
-  public function insertAfter(Action $action, Action $after): void
+  public function insertAfter(Action $newAction, Action $targetAction): void
   {
     if ($this->head === null) {
       return;
     }
 
     $current = $this->head;
-    while ($current !== null && $current->getAction()::class !== $after::class) {
+    while ($current !== null) {
+
+      if ($current->getAction()::class === $targetAction::class) {
+        break;
+      }
+
       $current = $current->getNext();
     }
 
-    if ($current !== null) {
-      $newNode = new Node($action);
+    if ($current !== null && $current->getAction()::class === $targetAction::class) {
+      $newNode = new Node($newAction);
       $newNode->setNext($current->getNext());
       $current->setNext($newNode);
     }

@@ -46,7 +46,14 @@ class Render
   public function render(): Response
   {
     ob_start();
-    $this->send();
+    try {
+      $this->send();
+    } catch (\RuntimeException $e) {
+      // clean the output buffer befor re-throwing the exception
+      ob_end_clean();
+      throw $e;
+    }
+
     $content = ob_get_clean();
 
     return new Response($content);
