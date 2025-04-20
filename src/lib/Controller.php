@@ -98,19 +98,19 @@ class Controller
     return $this->view;
   }
 
-  public function addAction(Action $action, string $queue = 'main'): void
+  public function addAction(Action $action, string $queue = 'MAIN'): void
   {
 
-    if ($queue === 'pre') {
+    if ($queue === 'PRE') {
       $this->preQueue->append($action);
-    } elseif ($queue === 'post') {
+    } elseif ($queue === 'POS') {
       $this->postQueue->append($action);
     } else {
       $this->mainQueue->append($action);
     }
   }
 
-  public function addActionFromRoute(string $section, string $name, string $queue = 'main'): void
+  public function addActionFromRoute(string $section, string $name, string $queue = 'MAIN'): void
   {
     if (isset($this->routes[$section][$name])) {
       $this->addAction($this->routes[$section][$name]['action'], $queue);
@@ -184,17 +184,16 @@ class Controller
       throw new \InvalidArgumentException('No route found for the given path');
     }
 
-    $this->initPreQueue($this->routes[$this->section]['PRE']);
-    $this->initPostQueue($this->routes[$this->section]['POS']);
+    $this->initPreQueue($this->routes[$this->section]['PRE'] ?? []);
+    $this->initPostQueue($this->routes[$this->section]['POS'] ?? []);
   }
 
 
   /**
    * @param array<Action> $actions
    */
-  private function initPreQueue(array $actions): void
+  private function initPreQueue(?array $actions): void
   {
-
     foreach ($actions as $action) {
       $this->preQueue->append($action);
     }
@@ -203,9 +202,8 @@ class Controller
   /**
    * @param array<Action> $actions
    */
-  private function initPostQueue(array $actions): void
+  private function initPostQueue(?array $actions): void
   {
-
     foreach ($actions as $action) {
       $this->postQueue->append($action);
     }
