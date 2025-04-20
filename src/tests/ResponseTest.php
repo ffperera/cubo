@@ -61,4 +61,11 @@ class ResponseTest extends TestCase
         $response->removeHeader('Content-Type');
         $this->assertEquals([], $response->getHeaders());
     }
+
+    public function testSetAndGetProtocolVersion()
+    {
+        $response = new \FFPerera\Cubo\Response('');
+        $response->setProtocolVersion('1.1');
+        $this->assertEquals('1.1', $response->getProtocolVersion());
+    }
 }

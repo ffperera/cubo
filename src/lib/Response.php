@@ -25,10 +25,14 @@ class Response
   public function __construct(private ?string $data) {}
 
 
-  public function send(?string $data = null, bool $withHeaders = true): void
+  public function send(mixed $data = null, bool $withHeaders = true): void
   {
     if ($data !== null) {
       $this->data = $data;
+    }
+
+    if (!is_string($this->data)) {
+      throw new \InvalidArgumentException('Response data must be a string');
     }
 
     $this->withHeaders($withHeaders);
@@ -94,6 +98,10 @@ class Response
     $this->protocolVersion = $version;
   }
 
+  public function getProtocolVersion(): string
+  {
+    return $this->protocolVersion;
+  }
 
   public function setStatus(int $code = 200, string $text = 'OK'): void
   {

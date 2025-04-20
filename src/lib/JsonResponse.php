@@ -9,9 +9,9 @@ use FFPerera\Cubo\Response;
 class JsonResponse extends Response
 {
 
-  public function __construct(private string $data) {}
+  public function __construct(private mixed $data) {}
 
-  public function send(?string $data = null, bool $withHeaders = true): void
+  public function send(mixed $data = null, bool $withHeaders = true): void
   {
 
     if ($data !== null) {

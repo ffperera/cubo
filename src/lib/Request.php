@@ -44,7 +44,7 @@ class Request
     $this->cookies = $_COOKIE;
     $this->server = $_SERVER;
 
-    $this->uriInfo = parse_url($_SERVER['REQUEST_URI']);
+    $this->uriInfo = parse_url($_SERVER['REQUEST_URI'] ?? '/');
 
     $this->method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
   }
@@ -75,6 +75,7 @@ class Request
   {
     return $this->method;
   }
+
 
   /**
    * @return array<string, mixed>
