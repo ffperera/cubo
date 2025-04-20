@@ -21,13 +21,6 @@ class JsonResponse extends Response
     // Implement the logic for sending a JSON response here
     $this->setHeader('Content-Type', 'application/json');
 
-    // TODO: other headers
-
-
-    if ($withHeaders) {
-      $this->sendHeaders();
-    }
-
-    echo json_encode($this->data);
+    parent::send(json_encode($this->data), $withHeaders);
   }
 }

@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace FFPerera\Cubo;
 
 
+// TODO: Response should be an implemantation of PSR-7
+// https://www.php-fig.org/psr/psr-7/
+
 class Response
 {
 

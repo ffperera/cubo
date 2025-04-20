@@ -29,5 +29,9 @@ class ViewTest extends TestCase
 
         // Test get with non-existing key
         $this->assertNull($view->get('non_existing_key'));
+
+        // test isset
+        $this->assertTrue($view->isset('user'));
+        $this->assertFalse($view->isset('non_existing_key'));
     }
 }
