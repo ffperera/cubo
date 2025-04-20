@@ -84,6 +84,7 @@ class Render
   {
     // check if the template file exists
     if (file_exists($this->rootDirectory . $template)) {
+      $thisView = $this->view;
       include $this->rootDirectory . $template;
     } else {
       throw new \RuntimeException("Layout file not found: " . $this->rootDirectory . $template);
