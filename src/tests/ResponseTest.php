@@ -12,8 +12,6 @@ class ResponseTest extends TestCase
         ],
         'statusCode' => 200,
         'statusText' => 'OK',
-        'contentType' => 'application/json',
-        'charset' => 'UTF-8',
         'protocolVersion' => '1.1',
     ];
 
