@@ -9,18 +9,18 @@ use FFPerera\Cubo\Response;
 class JsonResponse extends Response
 {
 
-  public function __construct(private mixed $data) {}
-
-  public function send(mixed $data = null, bool $withHeaders = true): void
+  public function __construct(private mixed $data, $options = [
+    'headers' => [
+      'Content-Type' => ['application/json; charset=UTF-8'],
+    ],
+    'statusCode' => 200,
+    'statusText' => 'OK',
+    'contentType' => 'application/json',
+    'charset' => 'UTF-8',
+    'protocolVersion' => '1.1',
+  ])
   {
-
-    if ($data !== null) {
-      $this->data = $data;
-    }
-
-    // Implement the logic for sending a JSON response here
-    $this->setHeader('Content-Type', 'application/json');
-
-    parent::send(json_encode($this->data), $withHeaders);
+    // Call the parent constructor to initialize the base Response class
+    parent::__construct(json_encode($this->data), $options);
   }
 }

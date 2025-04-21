@@ -4,101 +4,211 @@ declare(strict_types=1);
 
 namespace FFPerera\Cubo;
 
+use Psr\Http\Message\MessageInterface;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\StreamInterface;
 
-// TODO: Response should be an implemantation of PSR-7
+// Response should be an implemantation of PSR-7
 // https://www.php-fig.org/psr/psr-7/
+// Response is an inmutable object, so we need to return a new instance
+// when we change the state of the object
 
-class Response
+class Response implements \Psr\Http\Message\ResponseInterface
 {
+
 
   // private string $data;
 
   /**
-   * @var array<string, string> $headers
+   * @var array<string, array<string>> $headers
    */
-  private array $headers = [];
-  private int $statusCode = 200;
-  private string $statusText = 'OK';
-  private string $contentType = 'text/html';
-  private string $charset = 'UTF-8';
-  private string $protocolVersion = '1.1';
-  private bool $withHeaders = true;
+  private array   $headers = [];
+  private int     $statusCode = 200;
+  private string  $statusText = 'OK';
+  private string  $protocolVersion = '1.1';
 
+  private \Psr\Http\Message\StreamInterface $body;
 
-  public function __construct(private ?string $data) {}
-
-
-  public function send(mixed $data = null, bool $withHeaders = true): void
-  {
-    if ($data !== null) {
-      $this->data = $data;
-    }
-
-    if (!is_string($this->data)) {
-      throw new \InvalidArgumentException('Response data must be a string');
-    }
-
-    $this->withHeaders($withHeaders);
-    if ($this->withHeaders) {
-      $this->sendHeaders();
-    }
-
-    echo $this->data;
-  }
-
-
-  public function setHeader(string $name, string $value): void
-  {
-    $this->headers[$name] = $value;
-  }
-
-  public function removeHeader(string $name): void
-  {
-    unset($this->headers[$name]);
-  }
-  public function setCharset(string $charset): void
-  {
-    $this->charset = $charset;
-  }
-
-  public function getCharset(): string
-  {
-    return $this->charset;
-  }
 
 
   /**
-   * @return array<string, string>
+   * @param array<string, mixed> $options
+   */
+  public function __construct(private string $content, array $options = [
+    'headers' => [
+      'Content-Type' => 'text/html; charset=UTF-8',
+    ],
+    'statusCode' => 200,
+    'statusText' => 'OK',
+    'protocolVersion' => '1.1',
+
+  ])
+  {
+
+
+    if (isset($options['headers']) && is_array($options['headers'])) {
+      foreach ($options['headers'] as $key => $value) {
+        if (is_array($value)) {
+          // headers['key'] = ['value1', 'value2']
+          $this->headers[$key] = $value;
+        } else {
+          // headers['key'] = 'value'
+          $this->headers[$key] = [$value];
+        }
+      }
+    }
+
+    $this->statusCode = $options['statusCode'] ?? 200;
+    $this->statusText = $options['statusText'] ?? 'OK';
+    $this->protocolVersion = $options['protocolVersion'] ?? '1.1';
+
+
+    $this->body = new BodyStringStream($this->content);
+  }
+
+  public function __clone()
+  {
+    // This method is called when the object is cloned
+    // You can set up any common state here
+    $this->body = clone $this->body;
+  }
+
+
+  public function send(bool $withHeaders = true): void
+  {
+    if ($withHeaders) {
+      $this->sendHeaders();
+    }
+
+    echo $this->body->getContents();
+  }
+
+  public function getBody(): \Psr\Http\Message\StreamInterface
+  {
+    return $this->body;
+  }
+
+  public function withBody(StreamInterface $body): MessageInterface
+  {
+    $response = clone ($this);
+    $response->body = $body;
+
+    return $response;
+  }
+
+
+
+  /**
+   * @return array<string, array<string>>
    */
   public function getHeaders(): array
   {
     return $this->headers;
   }
 
-
-  public function setContentType(string $contentType): void
+  public function hasHeader(string $name): bool
   {
-    $this->contentType = $contentType;
+    foreach ($this->headers as $key => $value) {
+      if (strtolower($key) === strtolower($name)) {
+        return true;
+      }
+    }
+
+    return false;
   }
 
-  public function getContentType(): string
+  public function getHeader(string $name): array
   {
-    return $this->contentType;
+    foreach ($this->headers as $key => $value) {
+      if (strtolower($key) === strtolower($name)) {
+        return $value;
+      }
+    }
+    return [];
   }
 
-  public function setData(string $data): void
+  public function getHeaderLine(string $name): string
   {
-    $this->data = $data;
+    foreach ($this->headers as $key => $value) {
+      if (strtolower($key) === strtolower($name)) {
+        return implode(', ', $value);
+      }
+    }
+    return '';
   }
 
-  public function getData(): ?string
+  public function withHeader(string $name, mixed $value): ResponseInterface
   {
-    return $this->data;
+
+    if (is_string($value)) {
+      $value = [$value];
+    }
+
+    $response = clone ($this);
+
+    foreach ($response->headers as $key => $headerValue) {
+      if (strtolower($key) === strtolower($name)) {
+        if (is_array($value)) {
+          $response->headers[$key] = $value;
+        }
+        return $response;
+      }
+    }
+
+    // if the header does not exist, add it
+    if (is_array($value)) {
+      $response->headers[$name] = $value;
+    }
+
+    return $response;
   }
 
-  public function setProtocolVersion(string $version): void
+  public function withAddedHeader(string $name, mixed $value): MessageInterface
   {
-    $this->protocolVersion = $version;
+
+    if (is_string($value)) {
+      $value = [$value];
+    }
+
+    $response = clone ($this);
+
+    foreach ($response->headers as $key => $headerValue) {
+      if (strtolower($key) === strtolower($name)) {
+        if (is_array($value)) {
+          $response->headers[$key] = array_merge($response->headers[$key], $value);
+        }
+        return $response;
+      }
+    }
+
+    // if the header does not exist, add it
+    if (is_array($value)) {
+      $response->headers[$name] = $value;
+    }
+
+    return $response;
+  }
+
+  public function withoutHeader(string $name): MessageInterface
+  {
+    $response = clone ($this);
+
+    foreach ($response->headers as $key => $value) {
+      if (strtolower($key) === strtolower($name)) {
+        unset($response->headers[$key]);
+        return $response;
+      }
+    }
+
+    return $response;
+  }
+
+  public function withProtocolVersion(string $version): ResponseInterface
+  {
+    $response = clone ($this);
+    $response->protocolVersion = $version;
+
+    return $response;
   }
 
   public function getProtocolVersion(): string
@@ -106,22 +216,27 @@ class Response
     return $this->protocolVersion;
   }
 
-  public function setStatus(int $code = 200, string $text = 'OK'): void
+
+  public function getStatusCode(): int
   {
-    $this->statusCode = $code;
-    $this->statusText = $text;
+    return $this->statusCode;
   }
 
-  /**
-   * @return array<string, mixed>
-   */
-  public function getStatus(): array
+  public function getReasonPhrase(): string
   {
-    return [
-      'code' => $this->statusCode,
-      'text' => $this->statusText,
-    ];
+    return $this->statusText;
   }
+
+  public function withStatus(int $code, string $reasonPhrase = ''): ResponseInterface
+  {
+    $response = clone ($this);
+    $response->statusCode = $code;
+    $response->statusText = $reasonPhrase ?: 'OK';
+
+    return $response;
+  }
+
+
 
 
   public function redirect(string $route): void
@@ -131,18 +246,18 @@ class Response
     die();
   }
 
-  public function withHeaders(bool $withHeaders = true): void
-  {
-    $this->withHeaders = $withHeaders;
-  }
+
+
 
   protected function sendHeaders(): void
   {
+    // status line
     header(sprintf('HTTP/%s %d %s', $this->protocolVersion, $this->statusCode, $this->statusText));
-    header(sprintf('Content-Type: %s; charset=%s', $this->contentType, $this->charset));
+
+    // header(sprintf('Content-Type: %s; charset=%s', $this->contentType, $this->charset));
 
     foreach ($this->headers as $name => $value) {
-      header("$name: $value");
+      header(sprintf('%s: %s', $name, $this->getHeaderLine($name)));
     }
   }
 }
