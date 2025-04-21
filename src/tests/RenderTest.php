@@ -108,7 +108,7 @@ class RenderTest extends TestCase
         $response = $render->render();
 
         // Assert that the output matches the template content
-        $this->assertEquals('Template Content Block Content', $response->getData());
+        $this->assertEquals('Template Content Block Content', $response->getBody()->getContents());
     }
 
 
@@ -127,7 +127,7 @@ class RenderTest extends TestCase
         $response = $render->render();
 
         // there are no layout, so no content is generated
-        $this->assertEquals('', $response->getData());
+        $this->assertEquals('', $response->getBody()->getContents());
     }
 
     public function testRenderWithNonExistentTemplate()
@@ -147,6 +147,6 @@ class RenderTest extends TestCase
         $response = $render->render();
 
         // Assert that the output is empty
-        $this->assertEquals('', $response->getData());
+        $this->assertEquals('', $response->getBody()->getContents());
     }
 }

@@ -2,6 +2,12 @@
 
 use PHPUnit\Framework\TestCase;
 
+
+class ActionA1 extends \FFPerera\Cubo\Action
+{
+    public function run(\FFPerera\Cubo\Controller $controller): void {}
+}
+
 class ActionTest extends TestCase
 {
 
@@ -10,21 +16,14 @@ class ActionTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        $this->actionObjectOne = new class extends \FFPerera\Cubo\Action {
-            public function run(\FFPerera\Cubo\Controller $controller): void {}
-        };
+        $this->actionObjectOne = new ActionA1();
     }
 
-
-    public function testChildClassHasRunMethod()
+    public function testGetClass()
     {
-        $this->assertTrue(
-            method_exists($this->actionObjectOne, 'run'),
-            'Child class does not have the run method'
-        );
-        $this->assertTrue(
-            is_callable([$this->actionObjectOne, 'run']),
-            'Child class run method is not callable'
+        $this->assertEquals(
+            $this->actionObjectOne::class,
+            $this->actionObjectOne->getClass()
         );
     }
 }

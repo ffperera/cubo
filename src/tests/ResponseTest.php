@@ -1,71 +1,108 @@
 <?php
 
+use FFPerera\Cubo\BodyStringStream;
 use PHPUnit\Framework\TestCase;
 
 class ResponseTest extends TestCase
 {
 
-    public function testSetAndGetHeaders()
+    protected $options = [
+        'headers' => [
+            'Content-Type' => 'application/json; charset=UTF-8',
+        ],
+        'statusCode' => 200,
+        'statusText' => 'OK',
+        'contentType' => 'application/json',
+        'charset' => 'UTF-8',
+        'protocolVersion' => '1.1',
+    ];
+
+    protected function setUp(): void
     {
-        $response = new \FFPerera\Cubo\Response('');
-        $response->setHeader('Content-Type', 'application/json');
-        $this->assertEquals(['Content-Type' => 'application/json'], $response->getHeaders());
+        // This method is called before each test
+        // You can set up any common state here
     }
 
-    public function testSetAndGetStatusCode()
+    public function testConstructor()
     {
-        $response = new \FFPerera\Cubo\Response('');
-        $response->setStatus(200);
-
-        $this->assertEquals(200, $response->getStatus()['code']);
-        $this->assertEquals('OK', $response->getStatus()['text']);
-
-        $response->setStatus(404, 'Not Found');
-        $this->assertEquals(404, $response->getStatus()['code']);
-        $this->assertEquals('Not Found', $response->getStatus()['text']);
-    }
-    public function testSetAndGetContentType()
-    {
-        $response = new \FFPerera\Cubo\Response('');
-        $response->setContentType('application/json');
-        $this->assertEquals('application/json', $response->getContentType());
+        $response = new \FFPerera\Cubo\Response('{"key": "value"}', $this->options);
+        $this->assertInstanceOf(\FFPerera\Cubo\Response::class, $response);
     }
 
-
-    public function testSetAndGetCharset()
+    public function testGetHeaders()
     {
-        $response = new \FFPerera\Cubo\Response('');
-        $response->setCharset('UTF-8');
-        $this->assertEquals('UTF-8', $response->getCharset());
+        $response = new \FFPerera\Cubo\Response('{"key": "value"}', $this->options);
+
+
+        // getHeaders()
+        $this->assertEquals([
+            'Content-Type' => ['application/json; charset=UTF-8'],
+        ], $response->getHeaders());
+
+        $response = $response->withHeader('X-Custom-Header', 'CustomValue');
+        $this->assertEquals([
+            'Content-Type' => ['application/json; charset=UTF-8'],
+            'X-Custom-Header' => ['CustomValue'],
+        ], $response->getHeaders());
+
+        $this->assertEquals('CustomValue', $response->getHeaderLine('X-Custom-Header'));
+
+        $response = $response->withHeader('FancyHeaderStringNoArray', 'FancyStringValue');
+        $this->assertEquals('FancyStringValue', $response->getHeaderLine('FancyHeaderStringNoArray'));
+
+        $response = $response->withHeader('X-Custom-Header', ['SecondCustomValue']);
+        $this->assertEquals('SecondCustomValue', $response->getHeaderLine('X-Custom-Header'));
+
+        $response = $response->withAddedHeader('KEY-Header', 'KEY-Value');
+        $this->assertEquals('KEY-Value', $response->getHeaderLine('KEY-Header'));
+
+        $response = $response->withAddedHeader('X-Custom-Header', ['AnotherValue']);
+        $this->assertEquals('SecondCustomValue, AnotherValue', $response->getHeaderLine('X-Custom-Header'));
+
+        $response = $response->withoutHeader('X-Custom-Header');
+        $this->assertEquals('', $response->getHeaderLine('X-Custom-Header'));
+
+        $response = $response->withoutHeader('NOEXISTING-Header');
+        $this->assertEquals('', $response->getHeaderLine('NOEXISTING-Header'));
+
+        // getHeader()
+        $this->assertEquals(['application/json; charset=UTF-8'], $response->getHeader('Content-Type'));
+        $this->assertEquals([], $response->getHeader('NOEXISTING-Header'));
+
+        // hasHeader()
+        $this->assertTrue($response->hasHeader('Content-Type'));
+        $this->assertFalse($response->hasHeader('NOEXISTING-Header'));
     }
 
-    public function testSend()
+    public function testStatus()
     {
-        $response = new \FFPerera\Cubo\Response('');
+        $response = new \FFPerera\Cubo\Response('{"key": "value"}', $this->options);
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEquals('OK', $response->getReasonPhrase());
 
-        $response->setData('Hello, World!');
-        $this->assertEquals('Hello, World!', $response->getData());
-
-
-        ob_start();
-        $response->send('{"message": "Hello, World!"}', false);
-        $output = ob_get_clean();
-
-        $this->assertEquals('{"message": "Hello, World!"}', $output);
+        $response = $response->withStatus(404, 'Not Found');
+        $this->assertEquals(404, $response->getStatusCode());
+        $this->assertEquals('Not Found', $response->getReasonPhrase());
     }
 
-    public function testRemoveHeader()
-    {
-        $response = new \FFPerera\Cubo\Response('');
-        $response->setHeader('Content-Type', 'application/json');
-        $response->removeHeader('Content-Type');
-        $this->assertEquals([], $response->getHeaders());
-    }
 
-    public function testSetAndGetProtocolVersion()
+
+
+    public function testProtocolVersion()
     {
-        $response = new \FFPerera\Cubo\Response('');
-        $response->setProtocolVersion('1.1');
+        $response = new \FFPerera\Cubo\Response('{"key": "value"}', $this->options);
         $this->assertEquals('1.1', $response->getProtocolVersion());
+
+        $response = $response->withProtocolVersion('2.0');
+        $this->assertEquals('2.0', $response->getProtocolVersion());
+    }
+
+    public function testBody()
+    {
+        $response = new \FFPerera\Cubo\Response('{"key": "value"}', $this->options);
+        $this->assertEquals('{"key": "value"}', $response->getBody());
+
+        $response = $response->withBody(new BodyStringStream('{"newKey": "newValue"}'));
+        $this->assertEquals('{"newKey": "newValue"}', $response->getBody()->getContents());
     }
 }
