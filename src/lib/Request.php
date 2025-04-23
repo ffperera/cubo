@@ -104,8 +104,6 @@ class Request
 
   public function getPath(): string
   {
-    // TODO: extract path using regex (/admin/action/param/{id}/)
-
     return $this->uriInfo['path'] ?? '/';
   }
 }

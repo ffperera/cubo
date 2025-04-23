@@ -7,6 +7,7 @@ class ActionQueueTest extends TestCase
 
     protected \FFPerera\Cubo\Action $actionObjectOne;
     protected \FFPerera\Cubo\Action $actionObjectTwo;
+    protected \FFPerera\Cubo\Action $actionObjectThree;
 
     public function setUp(): void
     {
@@ -15,6 +16,9 @@ class ActionQueueTest extends TestCase
             public function run(\FFPerera\Cubo\Controller $controller): void {}
         };
         $this->actionObjectTwo = new class extends \FFPerera\Cubo\Action {
+            public function run(\FFPerera\Cubo\Controller $controller): void {}
+        };
+        $this->actionObjectThree = new class extends \FFPerera\Cubo\Action {
             public function run(\FFPerera\Cubo\Controller $controller): void {}
         };
     }
@@ -57,11 +61,18 @@ class ActionQueueTest extends TestCase
     {
         $actionQueue = new \FFPerera\Cubo\ActionQueue();
         $actionQueue->push($this->actionObjectOne);
-        $actionQueue->append($this->actionObjectTwo);
-        $actionQueue->insertBefore($this->actionObjectTwo, $this->actionObjectOne);
+        $actionQueue->insertBefore($this->actionObjectThree, $this->actionObjectOne);
 
-        // before the first action, so it should be the head
-        $this->assertSame($this->actionObjectTwo, $actionQueue->getHead()->getAction());
+        // first item is now ObjectThree
+        $this->assertSame($this->actionObjectThree, $actionQueue->pop());
+
+        $actionQueue->push($this->actionObjectOne);
+        $actionQueue->append($this->actionObjectTwo);
+        $actionQueue->insertBefore($this->actionObjectThree, $this->actionObjectTwo);
+
+        $this->assertSame($this->actionObjectOne, $actionQueue->pop());
+        $this->assertSame($this->actionObjectOne, $actionQueue->pop());
+        $this->assertSame($this->actionObjectThree, $actionQueue->pop());
     }
 
     public function testInsertBeforeNotFoundAction()

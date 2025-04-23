@@ -283,4 +283,61 @@ class ControllerTest extends TestCase
 
         $controller->run();
     }
+
+
+    // test complex routes
+    public function testComplexRoutes()
+    {
+
+        $routes = [
+            'app' => [
+                'home' => [
+                    'action' => new ActionC1(),
+                    'path' =>   '/some/route/{mainId}/{page}',
+                    'method' => 'GET',
+                ],
+            ],
+        ];
+
+        $_SERVER['REQUEST_URI'] = '/some/route/21/99';
+
+        $controller = new \FFPerera\Cubo\Controller($routes, $this->logger);
+        $request = $controller->getRequest();
+
+        $this->assertEquals('21', $request->query('mainId'));
+        $this->assertEquals('99', $request->query('page'));
+
+        $this->expectException(\InvalidArgumentException::class);
+
+        $_SERVER['REQUEST_URI'] = '/some/WRONG-PATH/21/99';
+        $controller = new \FFPerera\Cubo\Controller($routes, $this->logger);
+
+
+
+
+        $_SERVER['REQUEST_URI'] = '/';
+    }
+
+    public function testWrongPathNumberOfSegments()
+    {
+        $routes = [
+            'app' => [
+                'home' => [
+                    'action' => new ActionC1(),
+                    'path' =>   '/some/route/{mainId}/{page}',
+                    'method' => 'GET',
+                ],
+            ],
+        ];
+
+        $_SERVER['REQUEST_URI'] = '/some/route/21/99';
+
+        $this->expectException(\InvalidArgumentException::class);
+
+        $_SERVER['REQUEST_URI'] = '/some/21/99'; // wrong segment number
+        $controller = new \FFPerera\Cubo\Controller($routes, $this->logger);
+
+
+        $_SERVER['REQUEST_URI'] = '/';
+    }
 }

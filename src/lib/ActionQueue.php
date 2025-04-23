@@ -62,7 +62,7 @@ class ActionQueue
     }
 
     $current = $this->head;
-    while ($current->getNext() !== null && $current->getNext()->getAction()::class == $targetAction::class) {
+    while ($current->getNext() !== null && $current->getNext()->getAction()::class !== $targetAction::class) {
       $current = $current->getNext();
     }
 

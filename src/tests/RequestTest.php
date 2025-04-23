@@ -12,6 +12,7 @@ class RequestTest extends TestCase
         $_COOKIE['key'] = 'value';
 
 
+        $_SERVER['REQUEST_URI'] = '/some/route/21/';
         $request = new \FFPerera\Cubo\Request();
 
         // Test get method
@@ -33,7 +34,9 @@ class RequestTest extends TestCase
         $this->assertEquals('', $request->getQueryString());
 
         // test getPath method
-        $this->assertEquals('/', $request->getPath());
+        $this->assertEquals('/some/route/21/', $request->getPath());
+
+        $_SERVER['REQUEST_URI'] = '/';
     }
 
     public function testSetAndGetQueryVariables()

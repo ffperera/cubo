@@ -155,7 +155,13 @@ class Controller
   private function routing(): void
   {
 
+    // TODO: advanced routing to support query strings and params
+    // See Request::getPath() 
+
     // $queryString = $this->request->getQueryString() ?? '';
+
+    // real path     : /some/path/mysection/2/
+    // routing path  : /some/path/{section}/{id}/
     $path = $this->request->getPath();
     $method = $this->request->method();
 
@@ -166,7 +172,7 @@ class Controller
           continue;
         }
 
-        if ($route['path'] === $path && $route['method'] === $method) {
+        if ($route['method'] === $method && $this->extractPath($path, $route['path'])) {
 
           $this->section = $section;
 
@@ -186,6 +192,46 @@ class Controller
 
     $this->initPreQueue($this->routes[$this->section]['PRE'] ?? []);
     $this->initPostQueue($this->routes[$this->section]['POS'] ?? []);
+  }
+
+
+
+  private function extractPath(string $realPath, string $definedPath): bool
+  {
+
+    // Normalize paths by trimming slashes and splitting into segments
+    $definedSegments = explode('/', trim($definedPath, '/'));
+    $realSegments = explode('/', trim($realPath, '/'));
+
+    // Check if segment counts match
+    if (count($definedSegments) !== count($realSegments)) {
+      return false;
+    }
+
+    $params = [];
+
+    foreach ($definedSegments as $i => $segment) {
+      $realValue = $realSegments[$i];
+
+      // Check for placeholder pattern {parameter}
+      if (preg_match('/^{(\w+)}$/', $segment, $matches)) {
+        $paramName = $matches[1];
+        $params[$paramName] = $realValue;
+      } else {
+        // Verify static segments match exactly
+        if ($segment !== $realValue) {
+          return false;
+        }
+      }
+    }
+
+    // it seems ok
+    // save the params as $_GET params
+    foreach ($params as $name => $value) {
+      $this->request->setQuery($name, $value);
+    }
+
+    return true;
   }
 
 
