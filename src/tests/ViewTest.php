@@ -33,5 +33,20 @@ class ViewTest extends TestCase
         // test isset
         $this->assertTrue($view->isset('user'));
         $this->assertFalse($view->isset('non_existing_key'));
+
+        // test has
+        $this->assertTrue($view->has('user'));
+        $this->assertFalse($view->has('non_existing_key'));
+
+        // test remove
+        $view->remove('user');
+        $this->assertFalse($view->has('user'));
+        $this->assertNull($view->get('user'));
+
+        // test getAll()   
+        $view->clear();
+        $view->set('key1', 'value1');
+        $view->set('key2', 'value2');
+        $this->assertEquals(['key1', 'key2'], $view->getAll());
     }
 }

@@ -65,12 +65,39 @@ class View
     {
         $this->bag[$key] = $value;
     }
+
     public function get(string $key): mixed
     {
         return $this->bag[$key] ?? null;
     }
+
     public function isset(string $key): bool
     {
         return isset($this->bag[$key]);
+    }
+
+    public function has(string $key): bool
+    {
+        return isset($this->bag[$key]);
+    }
+
+    public function remove(string $key): void
+    {
+        unset($this->bag[$key]);
+    }
+
+    public function clear(): void
+    {
+        $this->bag = [];
+    }
+
+    /**
+     * Returns all keys in the bag.
+     * 
+     * @return array<string>
+     */
+    public function getAll(): array
+    {
+        return array_keys($this->bag);
     }
 }
