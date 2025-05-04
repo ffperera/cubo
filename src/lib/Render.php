@@ -49,7 +49,7 @@ class Render
     try {
       $this->send();
     } catch (\RuntimeException $e) {
-      // clean the output buffer befor re-throwing the exception
+      // clean the output buffer before re-throwing the exception
       ob_end_clean();
       throw $e;
     }
