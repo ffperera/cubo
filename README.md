@@ -176,26 +176,26 @@ class PostList extends Action
 
 ### Main controller
 
-The `Controller` object acts as Cubo's orchestration center.
+The `Controller` object acts as Cubo's orchestration center. It is like the **kernel** component of other frameworks.
 
 It handles:
 
 - Request routing management
-- Action queue
+- Action queues
 - Dependency injection (e.g., services)
 - Access to core Cubo components (`Request`, `View`, `Render`, `Response`)
 
 Once configured, your application primarily operates through the `Controller::run()` method call.
 
 ```php
-$controller = new Controller($routes, $logger);
+$controller = new Controller($routes, $logger, $debug=true);
 
 try {
     $view = $controller->run();
 
     if ($view) {
-        $render = new Render($srcDir);
-        $render->send($view);
+        $render = new Render($view, $srcDir);
+        $render->send();
     }
 
 } catch (Exception $e) {
@@ -272,7 +272,7 @@ Here's an example of how to use it:
 ```php
 
 // inside the Action::run() method
-$view = new View();
+$view = $controller->getView();
 $view->setLayout('layout.php');
 $view->setTemplate('content', 'content.php');
 
@@ -283,7 +283,7 @@ if ($view && $view instanceof \FFPerera\Cubo\View) {
 }
 ```
 
-Render uses PHP templates:
+Render can use PHP templates:
 
 ```html
 <div class="container">
@@ -304,6 +304,8 @@ Templates can be invoked from the layout or other templates using the `Render::b
 Data injected into the `View` by `Actions` can be accessed using the `View::get()` method.
 
 Additionally, you can create a custom `Render` subclass to integrate third-party template engines seamlessly.
+
+In this [demo](https://github.com/ffperera/cubo-demo) project, we use the [Latte](https://latte.nette.org/en/) template engine and PHP templates working together.
 
 ### HTTP Responses
 
