@@ -50,6 +50,11 @@ class Request
   }
 
 
+  public static function createFromGlobals(): self
+  {
+    return new self();
+  }
+
   public function query(string $key): string|null
   {
     return $this->get[$key] ?? null;
