@@ -35,11 +35,13 @@ class Controller
    */
   public function __construct(
     private array $routes,
-    private \Psr\Log\LoggerInterface $logger
+    private \Psr\Log\LoggerInterface $logger,
+    private bool $debuggingMode = false
   ) {
 
     // The type of $routes is already enforced, so no need to check if it's an array
     if (empty($routes)) {
+      $this->logger->error('ERROR: Routes cannot be empty');
       throw new \InvalidArgumentException('Routes cannot be empty');
     }
 
@@ -51,6 +53,7 @@ class Controller
 
 
     $this->request = new Request();
+    // or $this->request = Request::createFromGlobals();
     $this->routing();
   }
 
@@ -113,7 +116,12 @@ class Controller
   public function addActionFromRoute(string $section, string $name, string $queue = 'MAIN'): void
   {
     if (isset($this->routes[$section][$name])) {
+
       $this->addAction($this->routes[$section][$name]['action'], $queue);
+
+      if ($this->debuggingMode) {
+        $this->logger->debug('Adding action from route: ' . $section . ' ' . $name);
+      }
     } else {
       throw new \InvalidArgumentException('Route not found');
     }
@@ -155,11 +163,6 @@ class Controller
   private function routing(): void
   {
 
-    // TODO: advanced routing to support query strings and params
-    // See Request::getPath() 
-
-    // $queryString = $this->request->getQueryString() ?? '';
-
     // real path     : /some/path/mysection/2/
     // routing path  : /some/path/{section}/{id}/
     $path = $this->request->getPath();
@@ -178,6 +181,10 @@ class Controller
 
           if (isset($route['action']) && $route['action'] instanceof Action) {
             $this->mainQueue->push($route['action']);
+
+            if ($this->debuggingMode) {
+              $this->logger->debug('Action added to main queue', ['action' => $route['action']]);
+            }
           }
 
           // we use the first match, so break
@@ -187,6 +194,7 @@ class Controller
     }
 
     if (!isset($this->section) || $this->section === '') {
+      $this->logger->error('No route found for the given path', ['path' => $path]);
       throw new \InvalidArgumentException('No route found for the given path');
     }
 
@@ -242,6 +250,10 @@ class Controller
   {
     foreach ($actions as $action) {
       $this->preQueue->append($action);
+
+      if ($this->debuggingMode) {
+        $this->logger->debug("PRE queue > action added: " . $action->getClass());
+      }
     }
   }
 
@@ -252,6 +264,10 @@ class Controller
   {
     foreach ($actions as $action) {
       $this->postQueue->append($action);
+
+      if ($this->debuggingMode) {
+        $this->logger->debug("POS queue > action added: " . $action->getClass());
+      }
     }
   }
 }
