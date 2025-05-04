@@ -1,3 +1,14 @@
 /vendor/
 /coverage/
 .phpunit.result.cache
+/e2e.log
+
+
+
+
+
+
+
+
+
+
