@@ -94,7 +94,7 @@ class ControllerTest extends TestCase
     // test empty routes
     public function testEmptyRoutes()
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(\FFPerera\Cubo\Exceptions\RoutesNotDefinedException::class);
 
         $controller = new \FFPerera\Cubo\Controller([], $this->logger);
     }
@@ -227,7 +227,7 @@ class ControllerTest extends TestCase
     // test not section found
     public function testNotSectionFoundFromAddActionFromRoute()
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(\FFPerera\Cubo\Exceptions\NotFoundException::class);
 
         $controller = new \FFPerera\Cubo\Controller($this->routes, $this->logger);
 
@@ -237,7 +237,7 @@ class ControllerTest extends TestCase
 
     public function testNotRouteFound404()
     {
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(\FFPerera\Cubo\Exceptions\NotFoundException::class);
 
         $routes = [
             'app' => [
@@ -266,7 +266,7 @@ class ControllerTest extends TestCase
     public function testOnlyPreAndPosActions()
     {
 
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(\FFPerera\Cubo\Exceptions\NotFoundException::class);
 
         $routes = [
             'app' => [
@@ -307,7 +307,7 @@ class ControllerTest extends TestCase
         $this->assertEquals('21', $request->query('mainId'));
         $this->assertEquals('99', $request->query('page'));
 
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(\FFPerera\Cubo\Exceptions\NotFoundException::class);
 
         $_SERVER['REQUEST_URI'] = '/some/WRONG-PATH/21/99';
         $controller = new \FFPerera\Cubo\Controller($routes, $this->logger);
@@ -332,7 +332,7 @@ class ControllerTest extends TestCase
 
         $_SERVER['REQUEST_URI'] = '/some/route/21/99';
 
-        $this->expectException(\InvalidArgumentException::class);
+        $this->expectException(\FFPerera\Cubo\Exceptions\NotFoundException::class);
 
         $_SERVER['REQUEST_URI'] = '/some/21/99'; // wrong segment number
         $controller = new \FFPerera\Cubo\Controller($routes, $this->logger);

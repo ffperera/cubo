@@ -42,7 +42,7 @@ class Controller
     // The type of $routes is already enforced, so no need to check if it's an array
     if (empty($routes)) {
       $this->logger->error('ERROR: Routes cannot be empty');
-      throw new \InvalidArgumentException('Routes cannot be empty');
+      throw new \FFPerera\Cubo\Exceptions\RoutesNotDefinedException('Routes cannot be empty');
     }
 
     $this->preQueue = new ActionQueue();
@@ -123,7 +123,7 @@ class Controller
         $this->logger->debug('Adding action from route: ' . $section . ' ' . $name);
       }
     } else {
-      throw new \InvalidArgumentException('Route not found');
+      throw new \FFPerera\Cubo\Exceptions\NotFoundException('Route not found');
     }
   }
 
@@ -195,7 +195,7 @@ class Controller
 
     if (!isset($this->section) || $this->section === '') {
       $this->logger->error('No route found for the given path', ['path' => $path]);
-      throw new \InvalidArgumentException('No route found for the given path');
+      throw new \FFPerera\Cubo\Exceptions\NotFoundException('No route found for the given path');
     }
 
     $this->initPreQueue($this->routes[$this->section]['PRE'] ?? []);
